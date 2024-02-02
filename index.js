@@ -11,6 +11,8 @@ import init from './utils/init.js';
 import cli from './utils/cli.js';
 import log from './utils/log.js';
 import handleOAuth from './oauthHandler.js';
+import dotenv from 'dotenv';
+dotenv.config();
  // Import the OAuth handler
 
 const input = cli.input;

@@ -7,8 +7,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const clientId = process.env.GITHUB_CLIENT_ID;
-const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+const clientId = "Iv1.8891ec172d49e757";
+const clientSecret = "102a007a9c00abd57cf0f4daec9bd7b97d10dfd2";
 
 const handleOAuth = async() => {
     
@@ -16,8 +16,7 @@ const handleOAuth = async() => {
     const app = express();
     const server = app.listen(3000, () => {
         console.log('Temporary server running on http://localhost:3000');
-        const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
-        open(url).then(() => {
+        open(`https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`).then(() => {
             console.log('Browser opened successfully');
         }).catch(err => {
             console.error('Failed to open browser:', err);
