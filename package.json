@@ -1,0 +1,37 @@
+{
+	"name": "bot-beam",
+	"description": "CLI to install BOTs in GitHub repositories",
+	"version": "0.0.1",
+	"license": "UNLICENSED",
+	"bin": {
+		"beam": "./index.js"
+	},
+	"author": {
+		"name": "Janith Hathnagoda"
+	},
+	"keywords": [
+		"BotBeam",
+		"Janith Hathnagoda"
+	],
+	"files": [
+		"index.js",
+		"utils"
+	],
+	"scripts": {
+		"format": "prettier --write \"./**/*.{js,json}\""
+	},
+	"dependencies": {
+		"axios": "^1.6.7",
+		"chalk": "^4.1.2",
+		"cli-alerts": "^1.2.2",
+		"cli-handle-error": "^4.4.0",
+		"cli-handle-unhandled": "^1.1.1",
+		"cli-meow-help": "^3.1.0",
+		"cli-welcome": "^2.2.2",
+		"meow": "^9.0.0",
+		"open": "^10.0.3"
+	},
+	"devDependencies": {
+		"prettier": "^3.2.4"
+	}
+}
