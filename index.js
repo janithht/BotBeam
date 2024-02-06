@@ -13,6 +13,7 @@ import cli from './utils/cli.js';
 import log from './utils/log.js';
 import handleOAuth from './functions/oauthHandler.js';
 import listRepositories from './functions/listRepositories.js';
+import listPullRequests from './functions/listPRs.js';
 import dotenv from 'dotenv';
 dotenv.config();
  // Import the OAuth handler
@@ -43,7 +44,15 @@ rl.on('line', async (line) => {
                 oauthTokenObtained = true; // Assume OAuth token is obtained after handleOAuth() is called
                 break;
             case 'list':
-                if (args[1] === 'repos') {
+                if (args[1] === 'prs' && args.length >= 4) {
+                    const owner = args[2]; // Assuming the format is: list prs owner repo
+                    const repo = args[3];
+                    if (oauthTokenObtained) {
+                        await listPullRequests(owner, repo);
+                    } else {
+                        console.log('You must install a BOT before listing pull requests.');
+                    }
+                } else if (args[1] === 'repos') {
                     if (oauthTokenObtained) {
                         await listRepositories();
                     } else {
