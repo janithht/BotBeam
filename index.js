@@ -19,7 +19,8 @@ dotenv.config();
 
  const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
+    prompt: 'BotBeam> '
 });
 
 const { clear, debug } = cli.flags;
@@ -29,10 +30,10 @@ debug && log(cli.flags);
 
 let oauthTokenObtained = false; // State to track if OAuth token has been obtained
 
-const promptUser = () => {
-    rl.question('BotBeam> ', async (input) => {
-        const args = input.split(' ');
-        switch (args[0]) {
+rl.on('line', async (line) => {
+    const input = line.trim();
+    const args = input.split(' ');
+    switch (args[0]) {
             case 'help':
                 cli.showHelp(0);
                 break;
@@ -58,12 +59,10 @@ const promptUser = () => {
                 console.log('Unknown command:', input);
                 break;
         }
-        promptUser(); // Re-prompt the user for the next command
+        rl.prompt(); // Re-prompt after handling the command
+    }).on('close', () => {
+        console.log('Goodbye!');
+        process.exit(0);
     });
-};
 
-promptUser(); // Initial prompt
-
-rl.on('close', () => {
-    process.exit(0);
-});
+    rl.prompt(); // Show the initial prompt

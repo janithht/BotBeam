@@ -17,11 +17,7 @@ const handleOAuth = async() => {
     const server = app.listen(3000, () => {
         
         console.log('Temporary server running on http://localhost:3000');
-        open(`https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`).then(() => {
-            console.log('Browser opened successfully');
-        }).catch(err => {
-            console.error('Failed to open browser:', err);
-        });
+        open(`https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`);
     });
 
     app.get('/github/callback', async (req, res) => {
@@ -39,7 +35,6 @@ const handleOAuth = async() => {
 
             const accessToken = response.data.access_token;
             setAccessToken(accessToken);
-            console.log('Access Token:', accessToken);
 
             const appInstallationUrl = `https://github.com/apps/codecommentor/installations/new`;
             res.redirect(appInstallationUrl);
@@ -49,9 +44,7 @@ const handleOAuth = async() => {
             res.send('Authentication failed');
             } 
 
-            server.close(() => {
-                console.log('Temporary server closed');
-            });
+            server.close();
             
     });
 };

@@ -12,7 +12,19 @@ const listRepositories = async () => {
         });
 
         const repositories = response.data;
-        console.log('Repositories:', repositories.map(repo => repo.name).join(', '));
+
+        // Determine the longest repository name for formatting
+        const longestNameLength = repositories.reduce((max, repo) => Math.max(max, repo.name.length), 0);
+
+        // Generate a formatted string for each repository name, ensuring each name is padded to align in columns
+        const formattedNames = repositories.map(repo => repo.name.padEnd(longestNameLength + 4, ' ')); // Adding 4 spaces for padding between columns
+
+        // Group names into columns (assuming a desired width, e.g., 3 columns)
+        const columns = 3;
+        for (let i = 0; i < formattedNames.length; i += columns) {
+            const row = formattedNames.slice(i, i + columns).join('');
+            console.log(row);
+        }
     } catch (error) {
         console.error('Failed to list repositories:', error);
     }
