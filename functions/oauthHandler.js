@@ -3,6 +3,7 @@
 import express from 'express';
 import axios from 'axios';
 import open from 'open';
+import { setAccessToken } from './tokenStore.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -37,16 +38,21 @@ const handleOAuth = async() => {
             });
 
             const accessToken = response.data.access_token;
+            setAccessToken(accessToken);
             console.log('Access Token:', accessToken);
 
             const appInstallationUrl = `https://github.com/apps/codecommentor/installations/new`;
             res.redirect(appInstallationUrl);
+            
             } catch (error) {
             console.error('Error exchanging code for token', error);
             res.send('Authentication failed');
-            } finally {
-            server.close();
-        }
+            } 
+
+            server.close(() => {
+                console.log('Temporary server closed');
+            });
+            
     });
 };
 

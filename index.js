@@ -7,25 +7,63 @@
  * @author Janith Hathnagoda
  */
 
+import readline from 'readline';
 import init from './utils/init.js';
 import cli from './utils/cli.js';
 import log from './utils/log.js';
-import handleOAuth from './oauthHandler.js';
+import handleOAuth from './functions/oauthHandler.js';
+import listRepositories from './functions/listRepositories.js';
 import dotenv from 'dotenv';
 dotenv.config();
  // Import the OAuth handler
 
-const input = cli.input;
-const flags = cli.flags;
-const { clear, debug } = flags;
+ const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-(async () => {
-    init({ clear });
-    input.includes(`help`) && cli.showHelp(0);
-    debug && log(flags);
+const { clear, debug } = cli.flags;
 
-    if(input.includes(`install`)){
-        console.log('Initiating BOT installation...');
-        handleOAuth(); // Use the OAuth handler for the installation process
-    }
-})();
+init({ clear });
+debug && log(cli.flags);
+
+let oauthTokenObtained = false; // State to track if OAuth token has been obtained
+
+const promptUser = () => {
+    rl.question('BotBeam> ', async (input) => {
+        const args = input.split(' ');
+        switch (args[0]) {
+            case 'help':
+                cli.showHelp(0);
+                break;
+            case 'install':
+                console.log('Initiating BOT installation...');
+                await handleOAuth();
+                oauthTokenObtained = true; // Assume OAuth token is obtained after handleOAuth() is called
+                break;
+            case 'list':
+                if (args[1] === 'repos') {
+                    if (oauthTokenObtained) {
+                        await listRepositories();
+                    } else {
+                        console.log('You must install a BOT before listing repositories.');
+                    }
+                }
+                break;
+            case 'exit':
+                console.log('Exiting BotBeam CLI.');
+                rl.close();
+                return;
+            default:
+                console.log('Unknown command:', input);
+                break;
+        }
+        promptUser(); // Re-prompt the user for the next command
+    });
+};
+
+promptUser(); // Initial prompt
+
+rl.on('close', () => {
+    process.exit(0);
+});
