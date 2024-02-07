@@ -14,6 +14,7 @@ import log from './utils/log.js';
 import handleOAuth from './functions/oauthHandler.js';
 import listRepositories from './functions/listRepositories.js';
 import listPullRequests from './functions/listPRs.js';
+import addCommentToPRWithApp from './functions/addCommentToPRWithApp.js';
 import dotenv from 'dotenv';
 dotenv.config();
  // Import the OAuth handler
@@ -60,6 +61,24 @@ rl.on('line', async (line) => {
                     }
                 }
                 break;
+            case 'comment':
+                if (args[1] === 'pr' && args.length >= 5) {
+                    const owner = args[2];
+                    const repo = args[3];
+                    const prNumber = args[4];
+                    const comment = args.slice(5).join(' ').replace(/^"|"$/g, '');
+
+                    // Assuming your server is running locally on port 3000
+                    const serverUrl = 'http://localhost:3000/comment-pr';
+
+                    // Send the command to your server
+                    axios.post(serverUrl, { owner, repo, prNumber, comment })
+                        .then(response => console.log(response.data.message))
+                        .catch(error => console.error('Failed to send comment command:', error));
+                } else {
+                    console.log('Invalid command format. Expected: comment pr owner repo prNumber "comment"');
+                }
+                break;   
             case 'exit':
                 console.log('Exiting BotBeam CLI.');
                 rl.close();
