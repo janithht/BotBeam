@@ -2,10 +2,10 @@
 	"name": "bot-beam",
 	"description": "CLI to install BOTs in GitHub repositories",
 	"type": "module",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"license": "UNLICENSED",
 	"bin": {
-		"beam": "./index.js"
+		"beam": "index.js"
 	},
 	"author": {
 		"name": "Janith Hathnagoda"
@@ -16,7 +16,8 @@
 	],
 	"files": [
 		"index.js",
-		"utils"
+		"utils",
+		"functions"
 	],
 	"scripts": {
 		"format": "prettier --write \"./**/*.{js,json}\""
