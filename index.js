@@ -11,10 +11,10 @@ import readline from 'readline';
 import init from './utils/init.js';
 import cli from './utils/cli.js';
 import log from './utils/log.js';
+import axios from 'axios';
 import handleOAuth from './functions/oauthHandler.js';
 import listRepositories from './functions/listRepositories.js';
 import listPullRequests from './functions/listPRs.js';
-import addCommentToPRWithApp from './functions/addCommentToPRWithApp.js';
 import dotenv from 'dotenv';
 dotenv.config();
  // Import the OAuth handler
@@ -43,6 +43,7 @@ rl.on('line', async (line) => {
                 console.log('Initiating BOT installation...');
                 await handleOAuth();
                 oauthTokenObtained = true; // Assume OAuth token is obtained after handleOAuth() is called
+                console.log('');
                 break;
             case 'list':
                 if (args[1] === 'prs' && args.length >= 4) {
@@ -60,6 +61,7 @@ rl.on('line', async (line) => {
                         console.log('You must install a BOT before listing repositories.');
                     }
                 }
+                console.log('');
                 break;
             case 'comment':
                 if (args[1] === 'pr' && args.length >= 5) {
@@ -69,7 +71,7 @@ rl.on('line', async (line) => {
                     const comment = args.slice(5).join(' ').replace(/^"|"$/g, '');
 
                     // Assuming your server is running locally on port 3000
-                    const serverUrl = 'http://localhost:3000/comment-pr';
+                    const serverUrl = 'http://localhost:5000/comment-pr';
 
                     // Send the command to your server
                     axios.post(serverUrl, { owner, repo, prNumber, comment })
@@ -78,6 +80,7 @@ rl.on('line', async (line) => {
                 } else {
                     console.log('Invalid command format. Expected: comment pr owner repo prNumber "comment"');
                 }
+                console.log('');
                 break;   
             case 'exit':
                 console.log('Exiting BotBeam CLI.');
@@ -90,6 +93,7 @@ rl.on('line', async (line) => {
         rl.prompt(); // Re-prompt after handling the command
     }).on('close', () => {
         console.log('Goodbye!');
+        console.log('');
         process.exit(0);
     });
 

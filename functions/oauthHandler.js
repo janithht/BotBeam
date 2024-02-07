@@ -7,8 +7,8 @@ import { setAccessToken } from './tokenStore.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
-const clientId = "Iv1.8891ec172d49e757";
-const clientSecret = "102a007a9c00abd57cf0f4daec9bd7b97d10dfd2";
+const clientId = process.env.GITHUB_CLIENT_ID;
+const clientSecret = process.env.GITHUB_CLIENT_SECRET;
 
 const handleOAuth = async() => {
     
