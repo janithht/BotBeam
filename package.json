@@ -2,7 +2,7 @@
 	"name": "bot-beam",
 	"description": "CLI to install BOTs in GitHub repositories",
 	"type": "module",
-	"version": "1.1.2",
+	"version": "1.1.3",
 	"license": "UNLICENSED",
 	"bin": {
 		"beam": "index.js"

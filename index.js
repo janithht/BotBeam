@@ -43,7 +43,6 @@ rl.on('line', async (line) => {
                 console.log('Initiating BOT installation...');
                 await handleOAuth();
                 oauthTokenObtained = true; // Assume OAuth token is obtained after handleOAuth() is called
-                console.log('');
                 break;
             case 'list':
                 if (args[1] === 'prs' && args.length >= 4) {
