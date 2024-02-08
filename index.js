@@ -15,7 +15,7 @@ import axios from 'axios';
 import handleOAuth from './functions/oauthHandler.js';
 import listRepositories from './functions/listRepositories.js';
 import listPullRequests from './functions/listPRs.js';
-import mergePullRequest from './functions/mergePR.js';
+import fetchRepoStats from './functions/stats.js';
 import closePullRequest from './functions/closePR.js';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -44,11 +44,11 @@ rl.on('line', async (line) => {
             case 'install':
                 console.log('Initiating BOT installation...');
                 await handleOAuth();
-                oauthTokenObtained = true; // Assume OAuth token is obtained after handleOAuth() is called
+                oauthTokenObtained = true; // OAuth token is obtained after handleOAuth() is called
                 break;
             case 'list':
                 if (args[1] === 'prs' && args.length >= 4) {
-                    const owner = args[2]; // Assuming the format is: list prs owner repo
+                    const owner = args[2]; // format is: list prs owner repo
                     const repo = args[3];
                     if (oauthTokenObtained) {
                         await listPullRequests(owner, repo);
@@ -64,6 +64,26 @@ rl.on('line', async (line) => {
                 }
                 console.log('');
                 break;
+            case 'stats':
+                if (args.length >= 3) {
+                    const owner = args[1];
+                    const repo = args[2];
+                    
+                    fetchRepoStats(owner, repo)
+                        .then(stats => {
+                            console.log(`Statistics for ${owner}/${repo}:`);
+                            console.log(`Open Pull Requests: ${stats.openPullRequests}`);
+                            console.log(`Open Issues: ${stats.openIssues}`);
+                            console.log(`Contributors: ${stats.contributorsCount}`);
+                            console.log(`Last Commit Date: ${stats.lastCommitDate}`);
+                        })
+                        .catch(error => {
+                            console.log('Error fetching stats:', error.message);
+                        });
+                } else {
+                    console.log('Invalid command format. Expected: stats owner repo');
+                }
+                break;
             case 'comment':
                 if (args[1] === 'pr' && args.length >= 5) {
                     const owner = args[2];
@@ -71,10 +91,9 @@ rl.on('line', async (line) => {
                     const prNumber = args[4];
                     const comment = args.slice(5).join(' ').replace(/^"|"$/g, '');
 
-                    // Assuming your server is running locally on port 3000
+                    // Server is running locally on port 3000
                     const serverUrl = 'http://localhost:3000/comment-pr';
 
-                    // Send the command to your server
                     axios.post(serverUrl, { owner, repo, prNumber, comment })
                         .then(response => console.log(response.data.message))
                         .catch(error => console.error('Failed to send comment command:', error));
@@ -84,10 +103,10 @@ rl.on('line', async (line) => {
                 console.log('');
                 break;
             case 'close':
-                if (args[1] === 'pr' && args.length >= 5) { // Ensure there are enough arguments for this command
-                    const owner = args[2]; // Corrected: Owner comes from args[2]
-                    const repo = args[3]; // Corrected: Repo comes from args[3]
-                    const prNumber = args[4]; // Corrected: prNumber comes from args[4]
+                if (args[1] === 'pr' && args.length >= 5) { 
+                    const owner = args[2]; 
+                    const repo = args[3]; 
+                    const prNumber = args[4]; 
                     if (oauthTokenObtained) {
                         closePullRequest(owner, repo, prNumber);
                     } else {
