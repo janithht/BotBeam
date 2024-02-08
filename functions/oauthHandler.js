@@ -14,9 +14,9 @@ const handleOAuth = async() => {
     
     // Start a temporary server to handle the OAuth callback
     const app = express();
-    const server = app.listen(3000, () => {
+    const server = app.listen(5000, () => {
         
-        console.log('Temporary server running on http://localhost:3000');
+        console.log('Temporary server running on http://localhost:5000');
         open(`https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`);
     });
 

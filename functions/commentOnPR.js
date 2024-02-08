@@ -7,7 +7,7 @@ import { createAppAuth } from '@octokit/auth-app';
 dotenv.config();
 
 const app = express();
-const port = 5000;
+const port = 3000;
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json())
@@ -40,6 +40,18 @@ app.post('/comment-pr', async (req, res) => {
       res.status(500).json({ message: 'Failed to add comment' });
   }
 });
+
+app.post('/webhook', async (req, res) => {
+    try {
+      if (req.body.action === 'opened' && req.body.pull_request) {
+        process.env.GITHUB_INSTALLATION_ID = req.body.installation.id;
+      }
+      res.status(200).send('OK');
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal server error');
+    }
+  });
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);

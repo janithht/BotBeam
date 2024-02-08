@@ -70,7 +70,7 @@ rl.on('line', async (line) => {
                     const comment = args.slice(5).join(' ').replace(/^"|"$/g, '');
 
                     // Assuming your server is running locally on port 3000
-                    const serverUrl = 'http://localhost:5000/comment-pr';
+                    const serverUrl = 'http://localhost:3000/comment-pr';
 
                     // Send the command to your server
                     axios.post(serverUrl, { owner, repo, prNumber, comment })
