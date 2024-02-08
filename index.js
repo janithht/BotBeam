@@ -15,6 +15,8 @@ import axios from 'axios';
 import handleOAuth from './functions/oauthHandler.js';
 import listRepositories from './functions/listRepositories.js';
 import listPullRequests from './functions/listPRs.js';
+import mergePullRequest from './functions/mergePR.js';
+import closePullRequest from './functions/closePR.js';
 import dotenv from 'dotenv';
 dotenv.config();
  // Import the OAuth handler
@@ -80,7 +82,21 @@ rl.on('line', async (line) => {
                     console.log('Invalid command format. Expected: comment pr owner repo prNumber "comment"');
                 }
                 console.log('');
-                break;   
+                break;
+            case 'close':
+                if (args[1] === 'pr' && args.length >= 5) { // Ensure there are enough arguments for this command
+                    const owner = args[2]; // Corrected: Owner comes from args[2]
+                    const repo = args[3]; // Corrected: Repo comes from args[3]
+                    const prNumber = args[4]; // Corrected: prNumber comes from args[4]
+                    if (oauthTokenObtained) {
+                        closePullRequest(owner, repo, prNumber);
+                    } else {
+                        console.log('You must install the BOT before closing pull requests.');
+                    }
+                } else {
+                    console.log('Invalid command format. Expected: close pr owner repo prNumber');
+                }
+                break;
             case 'exit':
                 console.log('Exiting BotBeam CLI.');
                 rl.close();
