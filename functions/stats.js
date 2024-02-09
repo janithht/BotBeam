@@ -6,7 +6,7 @@ import boxen from 'boxen';
 async function fetchRepoStats(owner, repo) {
     const accessToken = getAccessToken();
     const headers = {
-        Authorization: `Bearer ${accessToken}`, // Updated to Bearer for consistency
+        Authorization: `Bearer ${accessToken}`, 
         Accept: 'application/vnd.github.v3+json',
     };
 
@@ -16,7 +16,7 @@ async function fetchRepoStats(owner, repo) {
         const contributors = await axios.get(`https://api.github.com/repos/${owner}/${repo}/contributors`, { headers });
         const commits = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits`, { headers });
 
-        // Prepare stats with visual enhancements
+        
         const statsFormatted = `
 ${chalk.bold('Repository Statistics for')} ${chalk.green(`${owner}/${repo}`)}:
 ${chalk.bold('- Open Pull Requests:')} ${chalk.yellow(prs.data.length)}
@@ -34,7 +34,6 @@ ${chalk.bold('- Last Commit Date:')} ${chalk.yellow(commits.data[0].commit.commi
             backgroundColor: '#555555'
         }));
 
-        // Return the raw data in case it needs to be used programmatically
         return {
             openPullRequests: prs.data.length,
             openIssues: issues.data.length - prs.data.length,

@@ -50,7 +50,6 @@ const listRepositories = async () => {
             boxContent += row.join('') + '\n'; // Join the columns without additional spacing, as padding is already added
         }
 
-        // Use boxen to display the repositories in a visually appealing box
         console.log(boxen(boxContent, {
             padding: 1,
             margin: 1,

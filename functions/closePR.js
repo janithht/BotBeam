@@ -8,7 +8,7 @@ async function closePullRequest(owner, repo, prNumber) {
             state: "closed"
         }, {
             headers: {
-                Authorization: `Bearer ${accessToken}`, // Replace yourOAuthToken with actual OAuth token variable
+                Authorization: `Bearer ${accessToken}`, 
                 Accept: 'application/vnd.github.v3+json'
             },
         });
