@@ -10,7 +10,7 @@ import readline from 'readline';
 import init from './utils/init.js';
 import cli from './utils/cli.js';
 import log from './utils/log.js';
-import axios from 'axios';
+import addComment from './functions/commentOnPR.js';
 import handleOAuth from './functions/oauthHandler.js';
 import listRepositories from './functions/listRepositories.js';
 import listPullRequests from './functions/listPRs.js';
@@ -19,6 +19,7 @@ import closePullRequest from './functions/closePR.js';
 import dotenv from 'dotenv';
 import chalk from 'chalk';
 import boxen from 'boxen';
+import { response } from 'express';
 dotenv.config();
 
 const rl = readline.createInterface({
@@ -79,19 +80,19 @@ rl.on('line', async (line) => {
             break;
         case 'comment':
             if (args.length >= 5) {
+                // Removes quotes from the start and end of the comment if present
                 const comment = args.slice(5).join(' ').replace(/^"|"$/g, '');
-                axios.post('http://localhost:3000/comment-pr', {
-                    owner: args[2], 
-                    repo: args[3], 
-                    prNumber: args[4], 
-                    comment
-                }).then(response => console.log(chalk.green(response.data.message)))
-                .catch(error => console.error(chalk.red('Failed to send comment command:'), error));
+                try {
+                    // Call addComment function directly with the appropriate arguments
+                    const response = await addComment(args[2], args[3], args[4], comment);
+                    console.log(chalk.green(response.message));
+                } catch (error) {
+                    console.error(chalk.red('Failed to add comment:', response.message));
+                }
             } else {
                 console.log(chalk.yellow('Invalid command format. Expected: comment pr owner repo prNumber "comment"'));
             }
-            console.log("");
-            break;
+            break;                
         case 'close':
             if (args[1] === 'pr' && args.length >= 5) {
                 if (oauthTokenObtained) {
