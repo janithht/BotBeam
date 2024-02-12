@@ -5,6 +5,7 @@ import axios from 'axios';
 import open from 'open';
 import fs from 'fs';
 import dotenv from 'dotenv';
+import http from 'http';
 
 dotenv.config();
 const clientId = process.env.GITHUB_CLIENT_ID;
@@ -13,10 +14,12 @@ const clientSecret = process.env.GITHUB_CLIENT_SECRET;
 async function handleOAuth() {
     
     // Start a temporary server to handle the OAuth callback
+    //const port = await getAvailablePort();
+    const port = 5000;
     const app = express();
-    const server = app.listen(5000, () => {
+    const server = app.listen(port, () => {
         
-        console.log('Temporary server running on http://localhost:5000');
+        console.log(`Temporary server running on http://localhost:${port}`);
         open(`https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`);
     });
 
@@ -49,33 +52,16 @@ async function handleOAuth() {
     });
 };
 
-async function getRandomPort() {
-    //if the port 5000 is using it should be incremented by 1
-    let port = 5000;
-  
-    while (port) {
-      const portTaken = await isPortTaken(port);
-      if (portTaken) {
-        port++;
-      } else {
-        return port;
-      }
-    }
-  }
-  
-  async function isPortTaken(port) {
-    return new Promise((resolve) => {
-      const server = app.listen(port, () => {
-        server.close(() => {
-          resolve(false); // Port is available
-        });
+async function getAvailablePort() {
+  return new Promise((resolve, reject) => {
+      const server = http.createServer();
+      server.listen(0, () => {
+          const port = server.address().port;
+          server.close(() => resolve(port));
       });
-  
-      server.on("error", (err) => {
-        err.code === "EADDRINUSE" ? resolve(true) : resolve(false);
-      });
-    });
-  }
+      server.on('error', reject);
+  });
+}
 
 function setAccessToken(token) {
     fs.writeFileSync("token.txt", token, "utf-8");
