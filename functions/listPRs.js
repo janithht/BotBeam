@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAccessToken } from './oauthHandler.js';
+import { getAccessToken } from './tokenStore.js';
 
 const listPullRequests = async (owner, repo) => {
     try {

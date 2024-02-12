@@ -6,6 +6,8 @@ dotenv.config();
 async function addComment(owner, repo, issue_number, body) {
   try {
     const installationId = await getInstallationId(owner, repo);
+    if(!installationId) throw new Error('Failed to get installation ID');
+    
       const octokit = new Octokit({
           authStrategy: createAppAuth,
           auth: {

@@ -6,6 +6,7 @@
  * 
  * @author Janith Hathnagoda
  */
+import winston from 'winston';
 import { Command } from 'commander';
 import dotenv from 'dotenv';
 import {handleOAuth} from './functions/oauthHandler.js';
@@ -30,6 +31,7 @@ program.command('install')
   .action(async () => {
     console.log(chalk.green('Initiating BOT installation...'));
     await handleOAuth();
+    console.log("");
   });
 
 
@@ -37,6 +39,7 @@ program.command('list-repos')
   .description('List all repositories')
   .action(async () => {
     await listRepositories();
+    console.log("");
   });
 
 program.command('list-prs')
@@ -45,6 +48,7 @@ program.command('list-prs')
   .requiredOption('-r, --repo <repo>', 'Name of the repository')
   .action(async (options) => {
     await listPullRequests(options.owner, options.repo);
+    console.log("");
   });
 
 program.command('stats')
@@ -53,6 +57,7 @@ program.command('stats')
   .requiredOption('-r, --repo <repo>', 'Name of the repository')
   .action(async (options) => {
     await fetchRepoStats(options.owner, options.repo);
+    console.log("");
   });
 
 program.command('comment')
@@ -63,6 +68,7 @@ program.command('comment')
   .requiredOption('-c, --comment <comment>', 'Comment text')
   .action(async (options) => {
     await addComment(options.owner, options.repo, options.prNumber, options.comment);
+    console.log("");
   });
 
 program.command('close')
@@ -72,6 +78,13 @@ program.command('close')
   .requiredOption('-p, --prNumber <prNumber>', 'Pull request number')
   .action(async (options) => {
     await closePullRequest(options.owner, options.repo, options.prNumber);
+    console.log("");
   });
 
 program.parse();
+
+const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || 'info',
+  format: winston.format.cli(),
+  transports: [new winston.transports.Console()],
+});

@@ -25,6 +25,12 @@ async function handleOAuth() {
 
     app.get('/github/callback', async (req, res) => {
         const code = req.query.code;
+        if (!code) {
+            // Respond to the client indicating the error
+            res.status(400).send("Authorization code is missing. Please ensure you're coming from a valid GitHub OAuth flow.");
+            return; // Early return to prevent further execution
+        }
+        
         try {
             const response = await axios.post('https://github.com/login/oauth/access_token', {
                 client_id: clientId,
@@ -37,6 +43,10 @@ async function handleOAuth() {
             });
 
             const accessToken = response.data.access_token;
+            if(!accessToken){
+                res.send('Authentication failed');
+                return;
+            }
             setAccessToken(accessToken);
 
             const appInstallationUrl = `https://github.com/apps/codecommentor/installations/new`;
