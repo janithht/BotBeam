@@ -23,7 +23,6 @@ async function addComment(owner, repo, issue_number, body) {
       });
       return{status: 'success', message: 'Comment added to PR'};
   } catch (error) {
-    console.error('Failed to add comment:', error);
       throw new error('Failed to add comment:', error);
   }
 }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAccessToken } from './tokenStore.js';
+import { getAccessToken } from './oauthHandler.js';
 import chalk from 'chalk';
 import boxen from 'boxen';
 

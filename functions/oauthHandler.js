@@ -3,14 +3,14 @@
 import express from 'express';
 import axios from 'axios';
 import open from 'open';
-import { setAccessToken } from './tokenStore.js';
+import fs from 'fs';
 import dotenv from 'dotenv';
 
 dotenv.config();
 const clientId = process.env.GITHUB_CLIENT_ID;
 const clientSecret = process.env.GITHUB_CLIENT_SECRET;
 
-const handleOAuth = async() => {
+async function handleOAuth() {
     
     // Start a temporary server to handle the OAuth callback
     const app = express();
@@ -49,5 +49,41 @@ const handleOAuth = async() => {
     });
 };
 
-export default handleOAuth;
+async function getRandomPort() {
+    //if the port 5000 is using it should be incremented by 1
+    let port = 5000;
+  
+    while (port) {
+      const portTaken = await isPortTaken(port);
+      if (portTaken) {
+        port++;
+      } else {
+        return port;
+      }
+    }
+  }
+  
+  async function isPortTaken(port) {
+    return new Promise((resolve) => {
+      const server = app.listen(port, () => {
+        server.close(() => {
+          resolve(false); // Port is available
+        });
+      });
+  
+      server.on("error", (err) => {
+        err.code === "EADDRINUSE" ? resolve(true) : resolve(false);
+      });
+    });
+  }
+
+function setAccessToken(token) {
+    fs.writeFileSync("token.txt", token, "utf-8");
+  }
+
+function getAccessToken() {
+    return fs.readFileSync("token.txt", "utf-8");
+}
+
+export { handleOAuth, setAccessToken, getAccessToken};
 

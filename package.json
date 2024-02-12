@@ -33,10 +33,13 @@
 		"cli-handle-unhandled": "^1.1.1",
 		"cli-meow-help": "^3.1.0",
 		"cli-welcome": "^2.2.2",
+		"commander": "^12.0.0",
 		"dotenv": "^16.4.1",
 		"express": "^4.18.2",
+		"fs": "^0.0.1-security",
 		"meow": "^9.0.0",
-		"open": "^10.0.3"
+		"open": "^10.0.3",
+		"yargs": "^17.7.2"
 	},
 	"devDependencies": {
 		"prettier": "^3.2.4"

@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { getAccessToken } from './tokenStore.js';
+import { getAccessToken } from './oauthHandler.js';
+
 
 async function closePullRequest(owner, repo, prNumber) {
     try {
