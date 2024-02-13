@@ -6,6 +6,7 @@ import open from 'open';
 import fs from 'fs';
 import dotenv from 'dotenv';
 import http from 'http';
+import chalk from 'chalk';
 
 dotenv.config();
 const clientId = process.env.GITHUB_CLIENT_ID;
@@ -51,13 +52,14 @@ async function handleOAuth() {
 
             const appInstallationUrl = `https://github.com/apps/codecommentor/installations/new`;
             res.redirect(appInstallationUrl);
-            
+            console.log(chalk.green('Authentication successful'));            
             } catch (error) {
             console.error('Error exchanging code for token', error);
             res.send('Authentication failed');
             } 
 
             server.close();
+            process.exit(0);    
             
     });
 };

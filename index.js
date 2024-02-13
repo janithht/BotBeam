@@ -6,7 +6,7 @@
  * 
  * @author Janith Hathnagoda
  */
-import winston from 'winston';
+import chalk from 'chalk';
 import { Command } from 'commander';
 import dotenv from 'dotenv';
 import {handleOAuth} from './functions/oauthHandler.js';
@@ -15,7 +15,6 @@ import listPullRequests from './functions/listPRs.js';
 import fetchRepoStats from './functions/stats.js';
 import addComment from './functions/commentOnPR.js';
 import closePullRequest from './functions/closePR.js';
-import chalk from 'chalk';
 
 dotenv.config();
 
@@ -67,7 +66,8 @@ program.command('comment')
   .requiredOption('-p, --prNumber <prNumber>', 'Pull request number')
   .requiredOption('-c, --comment <comment>', 'Comment text')
   .action(async (options) => {
-    await addComment(options.owner, options.repo, options.prNumber, options.comment);
+    const response = await addComment(options.owner, options.repo, options.prNumber, options.comment);
+    console.log(chalk.green(response.status,response.message));
     console.log("");
   });
 
@@ -83,8 +83,3 @@ program.command('close')
 
 program.parse();
 
-const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
-  format: winston.format.cli(),
-  transports: [new winston.transports.Console()],
-});
