@@ -20,6 +20,9 @@ async function addComment(owner, repo, issue_number, body) {
       },
     });
 
+    // Check and create labels if they do not exist
+    await checkAndCreateLabels(octokit, owner, repo);
+
     await octokit.rest.issues.createComment({
       owner: owner,
       repo: repo,
@@ -64,4 +67,30 @@ async function getInstallationId(owner, repo) {
     }
   }
 
+  async function checkAndCreateLabels(octokit, owner, repo) {
+    const labels = ['BuildSuccess', 'BuildFailure'];
+    try {
+        const existingLabels = await octokit.rest.issues.listLabelsForRepo({
+            owner,
+            repo,
+        });
+
+        const existingLabelsNames = existingLabels.data.map(label => label.name);
+
+        for (let label of labels) {
+            if (!existingLabelsNames.includes(label)) {
+                await octokit.rest.issues.createLabel({
+                    owner,
+                    repo,
+                    name: label,
+                    // Optional: Add color and description for the label
+                    color: label === 'BuildSuccess' ? '00ff00' : 'ff0000', 
+                    description: label === 'BuildSuccess' ? 'Indicates a successful build' : 'Indicates a failed build',
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Failed to check or create labels:', error);
+    }
+}
 export default addComment;
