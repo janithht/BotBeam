@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAccessToken } from './oauthHandler.js';
 
-const listPullRequests = async (owner, repo) => {
+async function listPullRequests(owner, repo){
     try {
         const accessToken = getAccessToken();
         const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/pulls`, {

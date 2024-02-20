@@ -14,6 +14,7 @@ import listRepositories from './functions/listRepositories.js';
 import listPullRequests from './functions/listPRs.js';
 import fetchRepoStats from './functions/stats.js';
 import addComment from './functions/commentOnPR.js';
+import findPRsByCommit from './functions/getPR.js';
 import closePullRequest from './functions/closePR.js';
 
 dotenv.config();
@@ -68,6 +69,22 @@ program.command('comment')
   .action(async (options) => {
     const response = await addComment(options.owner, options.repo, options.prNumber, options.comment);
     console.log(chalk.green(response.status,response.message));
+    console.log("");
+  });
+
+program.command('get-prs-by-commit')
+  .description('Get pull requests associated with a relevant commit hash')
+  .requiredOption('-o, --owner <owner>', 'Owner of the repository')
+  .requiredOption('-r, --repo <repo>', 'Name of the repository')
+  .requiredOption('-h, --Hash <Hash>', 'Commit Hash')
+  .action(async (options) => {
+    try {
+      const prs = await findPRsByCommit(options.owner, options.repo, options.Hash);
+      console.log("Pull Requests associated with the commit:");
+      console.log(prs);
+    } catch (error) {
+      console.error('Failed to fetch PRs:', error);
+    }
     console.log("");
   });
 
