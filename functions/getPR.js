@@ -41,7 +41,7 @@ async function findPRsByCommit(owner, repo, commitHash) {
   }
 }
 
-async function findPRsByBranchAndCommit(owner, repo, headBranch, commitHash) {
+async function findPRsByBranchAndCommit(owner, repo, baseBranch, commitHash) {
   try {
     const iterator = octokit.paginate.iterator(octokit.rest.repos.listPullRequestsAssociatedWithCommit, {
       owner,
@@ -55,8 +55,8 @@ async function findPRsByBranchAndCommit(owner, repo, headBranch, commitHash) {
     let allPullRequests = [];
 
     for await (const { data: pullRequests } of iterator) {
-      // Filter pull requests by the head branch
-      const filteredPRs = pullRequests.filter(pr => pr.head.ref === headBranch).map(pr => ({
+      // Filter pull requests by the base branch
+      const filteredPRs = pullRequests.filter(pr => pr.base.ref === baseBranch).map(pr => ({
         number: pr.number,
         title: pr.title,
         url: pr.html_url,
