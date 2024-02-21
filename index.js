@@ -14,7 +14,8 @@ import listRepositories from './functions/listRepositories.js';
 import listPullRequests from './functions/listPRs.js';
 import fetchRepoStats from './functions/stats.js';
 import addComment from './functions/commentOnPR.js';
-import findPRsByCommit from './functions/getPR.js';
+import {findPRsByCommit, findPRsByBranchAndCommit} from './functions/getPR.js';
+import { getCommitsByBranch } from './functions/getCommits.js';
 import closePullRequest from './functions/closePR.js';
 
 dotenv.config();
@@ -72,7 +73,7 @@ program.command('comment')
     console.log("");
   });
 
-program.command('get-prs-by-commit')
+program.command('get-prs-commit')
   .description('Get pull requests associated with a relevant commit hash')
   .requiredOption('-o, --owner <owner>', 'Owner of the repository')
   .requiredOption('-r, --repo <repo>', 'Name of the repository')
@@ -80,8 +81,41 @@ program.command('get-prs-by-commit')
   .action(async (options) => {
     try {
       const prs = await findPRsByCommit(options.owner, options.repo, options.Hash);
-      console.log("Pull Requests associated with the commit:");
+      console.log("Pull Requests:");
       console.log(prs);
+    } catch (error) {
+      console.error('Failed to fetch PRs:', error);
+    }
+    console.log("");
+  });
+  
+program.command('get-prs-branch-commit')
+  .description('Get pull requests associated with a relevant commit hash')
+  .requiredOption('-o, --owner <owner>', 'Owner of the repository')
+  .requiredOption('-r, --repo <repo>', 'Name of the repository')
+  .requiredOption('-b, --branch <branch>', 'Branch Name')
+  .requiredOption('-h, --Hash <Hash>', 'Commit Hash')
+  .action(async (options) => {
+    try {
+      const prs = await findPRsByBranchAndCommit(options.owner, options.repo, options.branch, options.Hash);
+      console.log("Pull Requests:");
+      console.log(prs);
+    } catch (error) {
+      console.error('Failed to fetch PRs:', error);
+    }
+    console.log("");
+  });
+
+program.command('get-commits-branch')
+  .description('Get pull requests associated with a relevant commit hash')
+  .requiredOption('-o, --owner <owner>', 'Owner of the repository')
+  .requiredOption('-r, --repo <repo>', 'Name of the repository')
+  .requiredOption('-b, --branch <branch>', 'Branch Name')
+  .action(async (options) => {
+    try {
+      const commits = await getCommitsByBranch(options.owner, options.repo, options.branch);
+      console.log("Pull Requests:");
+      console.log(commits);
     } catch (error) {
       console.error('Failed to fetch PRs:', error);
     }

@@ -10,8 +10,7 @@ const octokit = new Octokit({
 
 async function findPRsByCommit(owner, repo, commitHash) {
   try {
-    // Fetch the pull requests associated with the commit
-    const { data: pullRequests } = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
+    const iterator = octokit.paginate.iterator(octokit.rest.repos.listPullRequestsAssociatedWithCommit, {
       owner,
       repo,
       commit_sha: commitHash,
@@ -20,13 +19,56 @@ async function findPRsByCommit(owner, repo, commitHash) {
       },
     });
 
-    // Extract relevant information from the pull requests
-    return pullRequests.map(pr => ({
-      number: pr.number,
-      title: pr.title,
-      url: pr.html_url,
-      state: pr.state,
-    }));
+    // An array to collect all pull requests across pages
+    let allPullRequests = [];
+
+    // Loop through each page of results
+    for await (const { data: pullRequests } of iterator) {
+      allPullRequests = allPullRequests.concat(pullRequests.map(pr => ({
+        number: pr.number,
+        title: pr.title,
+        url: pr.html_url,
+        state: pr.state,
+        headBranch: pr.head.ref, // Add the branch from which the PR originates
+        baseBranch: pr.base.ref, // Optionally, include the target branch of the PR
+      })));
+    }
+
+    return allPullRequests;
+  } catch (error) {
+    console.error('Error fetching PRs:', error);
+    throw error;
+  }
+}
+
+async function findPRsByBranchAndCommit(owner, repo, headBranch, commitHash) {
+  try {
+    const iterator = octokit.paginate.iterator(octokit.rest.repos.listPullRequestsAssociatedWithCommit, {
+      owner,
+      repo,
+      commit_sha: commitHash,
+      mediaType: {
+        previews: ['groot'], // This preview header includes draft PRs
+      },
+    });
+
+    let allPullRequests = [];
+
+    for await (const { data: pullRequests } of iterator) {
+      // Filter pull requests by the head branch
+      const filteredPRs = pullRequests.filter(pr => pr.head.ref === headBranch).map(pr => ({
+        number: pr.number,
+        title: pr.title,
+        url: pr.html_url,
+        state: pr.state,
+        headBranch: pr.head.ref,
+        baseBranch: pr.base.ref,
+      }));
+
+      allPullRequests = allPullRequests.concat(filteredPRs);
+    }
+
+    return allPullRequests;
   } catch (error) {
     console.error('Error fetching PRs:', error);
     throw error;
@@ -34,4 +76,4 @@ async function findPRsByCommit(owner, repo, commitHash) {
 }
 
 
-export default findPRsByCommit;
+export { findPRsByCommit, findPRsByBranchAndCommit };
