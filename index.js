@@ -114,7 +114,7 @@ program.command('get-commits-branch')
   .action(async (options) => {
     try {
       const commits = await getCommitsByBranch(options.owner, options.repo, options.branch);
-      console.log("Pull Requests:");
+      console.log("Commits:");
       console.log(commits);
     } catch (error) {
       console.error('Failed to fetch PRs:', error);
